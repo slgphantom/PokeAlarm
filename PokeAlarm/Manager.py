@@ -39,6 +39,7 @@ class Manager(object):
         self.__pokestop_hist = {}
         self.__gym_filter = None
         self.__gym_hist = {}
+        self.__captcha_filter = {}
         self.create_filters(get_path(filters))
 
         # Create the Geofences to filter with from given file
@@ -128,6 +129,8 @@ class Manager(object):
                     self.handle_pokestop(obj)
                 elif kind == "gym":
                     self.handle_gym(obj)
+                elif kind == 'captcha':
+                    self.handle_captcha(obj)
                 else:
                     log.error("!!! Manager does not support {} objects!".format(kind))
                 log.debug("Finished processing object {} with id {}".format(obj['type'], obj['id']))
@@ -434,6 +437,22 @@ class Manager(object):
         for thread in threads:
             thread.join()
 
+    # Handle captcha requests
+    def handle_captcha(self, captcha):
+        if self.__captcha_filter['enabled'] is False:
+            log.debug("Captcha ignored: notifications are disabled.")
+
+        # TODO: More filtering?
+
+        threads = []
+        # Spawn notifications in threads so they can work in background
+        for alarm in self.__alarms:
+            threads.append(gevent.spawn(alarm.captcha_alert, captcha))
+            gevent.sleep(0)  # explict context yield
+
+        for thread in threads:
+            thread.join()
+
     # Retrieve optional requirements
     def optional_arguments(self, info):
         lat, lng = info['lat'], info['lng']
@@ -463,6 +482,9 @@ class Manager(object):
 
         # Set up Gym filter
         self.set_gyms(filters.get('gyms', {}))
+
+        # Set uo Captcha filters
+        self.set_captchas(filters.get('captchas', {}))
 
     # Update the pokemon according to settings
     def set_pokemon(self, settings):
@@ -554,6 +576,10 @@ class Manager(object):
             log.debug("Team #{} was set to the following: \n{}".format(
                 key, json.dumps(gyms[key], sort_keys=True, indent=4)))
         self.__gym_filter = gyms
+
+    def set_captchas(self, settings):
+        captcha = {  "enabled": bool(parse_boolean(settings.pop('enabled', False))) }
+        self.__captcha_filter = captcha
 
     def create_geofences(self, file_path):
         if file_path is None:

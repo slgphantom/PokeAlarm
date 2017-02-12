@@ -49,6 +49,10 @@ class Alarm(object):
     def gym_alert(self, pokegym_info):
         raise NotImplementedError("This is an abstract method.")
 
+    # Trigger an alert based on Captcha info
+    def captcha_alert(self, captcha_info):
+        raise NotImplementedError("This is an abstract method.")
+
     # Return a version of the string with the correct substitutions made
     @staticmethod
     def replace(string, pkinfo):

@@ -40,6 +40,13 @@ class DiscordAlarm(Alarm):
             'title': "A Team <old_team> gym has fallen!",
             'url': "<gmaps>",
             'body': "It is now controlled by <new_team>."
+        },
+        'captcha': {
+            'username': "Captcha Info",
+            'title': "The account \"<account>\" has encountered a captcha on scanner \"<scanner_name>\"",
+            'icon_url' : "",
+            'url': "",
+            'body': "Mode: <mode> \n Captcha's so far: <captcha_count> \n Time left: <time>"
         }
     }
 
@@ -55,6 +62,7 @@ class DiscordAlarm(Alarm):
         self.__pokemon = self.set_alert(settings.get('pokemon', {}), self._defaults['pokemon'])
         self.__pokestop = self.set_alert(settings.get('pokestop', {}), self._defaults['pokestop'])
         self.__gym = self.set_alert(settings.get('gym', {}), self._defaults['gym'])
+        self.__captcha = self.set_alert(settings.get('captcha', {}), self._defaults['captcha'])
 
         # Connect and send startup messages
         if parse_boolean(self.__startup_message):
@@ -90,9 +98,10 @@ class DiscordAlarm(Alarm):
             'title': replace(alert['title'], info),
             'url': replace(alert['url'], info),
             'description': replace(alert['body'], info),
-            'thumbnail': replace(alert['icon_url'], info),
-            'attachments': replace(alert['map'], {'lat': info['lat'], 'lng': info['lng']})
+            'thumbnail': replace(alert['icon_url'], info)
         }
+        if 'lat' in info and 'lng' in info:
+            args['attachments'] = replace(alert['map'], {'lat': info['lat'], 'lng': info['lng']})
         try_sending(log, self.connect, "Discord", self.send_webhook, args)
 
     def send_webhook(self, **args):
@@ -111,7 +120,7 @@ class DiscordAlarm(Alarm):
                     'url': args['url'],
                     'description': args['description'],
                     'thumbnail': {'url': args['thumbnail']},
-                    'image': {'url': args['attachments']}
+                    'image': {'url': args.get('attachments', "")}
                 }]
             }
         try:
@@ -132,3 +141,7 @@ class DiscordAlarm(Alarm):
     # Trigger an alert based on Pokestop info
     def gym_alert(self, gym_info):
         self.send_alert(self.__gym, gym_info)
+
+    # Trigger an alert based on Pokestop info
+    def captcha_alert(self, captcha_info):
+        self.send_alert(self.__captcha, captcha_info)

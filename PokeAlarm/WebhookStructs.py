@@ -103,10 +103,12 @@ class RocketMap:
     def captcha(data):
         log.debug("Converting to captcha: \n {}".format(data))
         captcha = {
-            'instance_name': str(data['status_name']),
+            'type': "captcha",
+            'id': "captcha",
+            'scanner_name': str(data['status_name']),
             'mode': str(data['mode']),
             'account': str(data['username']),
-            'captcha': str(data['captcha']),
+            'captcha_count': str(data['captcha']),
             'time': str(data['time'])
         }
         return captcha
