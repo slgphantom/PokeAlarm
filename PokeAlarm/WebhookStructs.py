@@ -107,7 +107,7 @@ class RocketMap:
             'id': "captcha",
             'scanner_name': str(data['status_name']),
             'mode': str(data['mode']),
-            'account': str(data['username']),
+            'account': str(data['account']),
             'captcha_count': str(data['captcha']),
             'time': str(data['time'])
         }
