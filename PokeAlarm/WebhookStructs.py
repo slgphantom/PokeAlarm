@@ -21,13 +21,16 @@ class RocketMap:
     def make_object(data):
         try:
             kind = data.get('type')
+            msg = data.get('message')
             if kind == 'pokemon':
-                return RocketMap.pokemon(data.get('message'))
-            elif data['type'] == 'pokestop':
-                return RocketMap.pokestop(data.get('message'))
-            elif data['type'] == 'gym' or data['type'] == 'gym_details':
-                return RocketMap.gym(data.get('message'))
-            elif data['type'] in ['captcha', 'scheduler']:  # Unsupported Webhooks
+                return RocketMap.pokemon(msg)
+            elif kind == 'pokestop':
+                return RocketMap.pokestop(msg)
+            elif kind == 'gym' or data['type'] == 'gym_details':
+                return RocketMap.gym(msg)
+            elif kind == 'captcha':
+                return RocketMap.captcha(msg)
+            elif data['type'] in ['scheduler']:  # Unsupported Webhooks
                 log.debug("{} webhook received. This captcha is not yet supported at this time. ")
             else:
                 log.error("Invalid type specified ({}). Are you using the correct map type?".format(kind))
@@ -95,6 +98,18 @@ class RocketMap:
         }
         gym['gmaps'] = get_gmaps_link(gym['lat'], gym['lng'])
         return gym
+
+    @staticmethod
+    def captcha(data):
+        log.debug("Converting to captcha: \n {}".format(data))
+        captcha = {
+            'instance_name': str(data['status_name']),
+            'mode': str(data['mode']),
+            'account': str(data['username']),
+            'captcha': str(data['captcha']),
+            'time': str(data['time'])
+        }
+        return captcha
 ########################################################################################################################
 
 
