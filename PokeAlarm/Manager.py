@@ -441,6 +441,7 @@ class Manager(object):
     def handle_captcha(self, captcha):
         if self.__captcha_filter['enabled'] is False:
             log.debug("Captcha ignored: notifications are disabled.")
+            return
 
         # TODO: More filtering?
 
@@ -579,6 +580,7 @@ class Manager(object):
 
     def set_captchas(self, settings):
         captcha = {  "enabled": bool(parse_boolean(settings.pop('enabled', False))) }
+        log.info("Captchas settings: {}".format(captcha))
         self.__captcha_filter = captcha
 
     def create_geofences(self, file_path):
