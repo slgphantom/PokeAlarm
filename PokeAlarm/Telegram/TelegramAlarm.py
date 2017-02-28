@@ -94,6 +94,15 @@ class TelegramAlarm(Alarm):
                 'disable_notification': 'True'
             }
             try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
+            
+        if alert['location']:
+            args = {
+                'chat_id': alert['chat_id'],
+                'latitude': info['lat'],
+                'longitude': info['lng'],
+                'disable_notification': "%s" % alert['disable_map_notification']
+            }
+            try_sending(log, self.connect, "Telegram (loc)", self.__client.sendLocation, args)
 
         if alert['venue']:
             args = {
@@ -114,14 +123,7 @@ class TelegramAlarm(Alarm):
                 'parse_mode':'HTML'
             }
             try_sending(log, self.connect, "Telegram", self.__client.sendMessage, args)
-        if alert['location']:
-            args = {
-                'chat_id': alert['chat_id'],
-                'latitude': info['lat'],
-                'longitude': info['lng'],
-                'disable_notification': "%s" % alert['disable_map_notification']
-            }
-            try_sending(log, self.connect, "Telegram (loc)", self.__client.sendLocation, args)
+
 
     # Trigger an alert based on Pokemon info
     def pokemon_alert(self, pokemon_info):
@@ -143,3 +145,5 @@ class TelegramAlarm(Alarm):
             self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()))
         else:
             self.send_alert(self.__gym, gym_info)
+Contact GitHub API Training Shop Blog About
+© 2017 GitHub, Inc. Terms Privacy Security Status Help
