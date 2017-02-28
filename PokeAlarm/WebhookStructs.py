@@ -62,7 +62,8 @@ class RocketMap:
             'weight': float(weight) if weight is not None else '?',
             'gender': int(gender) if gender is not None else '?',
             'cp': int(cp) if cp is not None else '?',
-            'form': int(form) if form is not None else '?'
+            'form': int(form) if form is not None else '?',
+            'verified': data['verified']
         }
         pkmn['gmaps'] = get_gmaps_link(pkmn['lat'], pkmn['lng'])
         if atk is None or def_ is None or sta is None:
