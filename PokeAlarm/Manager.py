@@ -242,9 +242,11 @@ class Manager(object):
         else:
             log.debug("Pokemon inside geofences was not checked because no geofences were set.")
         
-        height, weight, gender = pkmn['height'], pkmn['weight'], pkmn['gender']
+        height, weight, gender, cp, form = pkmn['height'], pkmn['weight'], pkmn['gender'], pkmn['cp'], pkmn['form']
         if gender != '?':
             gender = u'\u2642' if gender is 1 else u'\u2640' if gender is 2 else u'\u26b2' # male, female, neutral
+        if form != '?':
+            form = 'A' if form is 1 else 'B' if form is 2 else 'C' if form is 3 else 'D' if form is 4 else 'E' if form is 5 else 'F' if form is 6 else 'G' if form is 7 else 'H' if form is 8 else 'I' if form is 9 else 'J' if form is 10 else 'K' if form is 11 else 'L' if form is 12 else 'M' if form is 13 else 'N' if form is 14 else 'O' if form is 15 else 'P' if form is 16 else 'Q' if form is 17 else 'R' if form is 18 else 'S' if form is 19 else 'T' if form is 20 else 'U' if form is 21 else 'V' if form is 22 else 'W' if form is 23 else 'X' if form is 24 else 'Y' if form is 25 else 'Z' if form is 26 else '!' if form is 27 else '?' if form is 28 else 'unkn' #neutral
         
         time_str = get_time_as_str(pkmn['disappear_time'], self.__timezone)
         pkmn.update({
@@ -269,7 +271,9 @@ class Manager(object):
             'move_2_energy': get_move_energy(move_2_id),
             'height': "{:.1f}".format(height) if height != '?' else '?',
             'weight': "{:.1f}".format(weight) if weight != '?' else '?',
-            'gender': gender
+            'gender': gender,
+            'form': form,
+            'cp': cp
         })
         # Optional Stuff
         self.optional_arguments(pkmn)
@@ -717,7 +721,7 @@ class Manager(object):
             log.error("No Google Maps API key provided - unable to reverse geocode.")
             return details
         try:
-            result = self.__gmaps_client.reverse_geocode((lat, lng))[0]
+            result = self.__gmaps_client.reverse_geocode((lat,lng),language='zh-TW')[0]
             loc = {}
             for item in result['address_components']:
                 for category in item['types']:
