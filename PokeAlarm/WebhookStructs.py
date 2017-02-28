@@ -44,6 +44,7 @@ class RocketMap:
         move_1_id, move_2_id = data.get('move_1'), data.get('move_2')
         atk, def_, sta = data.get('individual_attack'), data.get('individual_defense'), data.get('individual_stamina')
         height, weight, gender = data.get('height'), data.get('weight'), data.get('gender')
+        cp, form = data.get('cp'), data.get('form')
 
         pkmn = {
             'type': "pokemon",
@@ -59,7 +60,9 @@ class RocketMap:
             'sta': int(sta) if sta is not None else 'unkn',
             'height': float(height) if height is not None else '?',
             'weight': float(weight) if weight is not None else '?',
-            'gender': int(gender) if gender is not None else '?'
+            'gender': int(gender) if gender is not None else '?',
+            'cp': int(cp) if cp is not None else '?',
+            'form': int(form) if form is not None else '?'
         }
         pkmn['gmaps'] = get_gmaps_link(pkmn['lat'], pkmn['lng'])
         if atk is None or def_ is None or sta is None:
