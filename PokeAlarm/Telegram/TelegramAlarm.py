@@ -145,5 +145,4 @@ class TelegramAlarm(Alarm):
             self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()))
         else:
             self.send_alert(self.__gym, gym_info)
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help
+
