@@ -249,7 +249,7 @@ class Manager(object):
         if form != '?':
             form = 'A' if form is 1 else 'B' if form is 2 else 'C' if form is 3 else 'D' if form is 4 else 'E' if form is 5 else 'F' if form is 6 else 'G' if form is 7 else 'H' if form is 8 else 'I' if form is 9 else 'J' if form is 10 else 'K' if form is 11 else 'L' if form is 12 else 'M' if form is 13 else 'N' if form is 14 else 'O' if form is 15 else 'P' if form is 16 else 'Q' if form is 17 else 'R' if form is 18 else 'S' if form is 19 else 'T' if form is 20 else 'U' if form is 21 else 'V' if form is 22 else 'W' if form is 23 else 'X' if form is 24 else 'Y' if form is 25 else 'Z' if form is 26 else '!' if form is 27 else '?' if form is 28 else '' #neutral
         if verified != '?':
-            verified = u'好似係' if verified is 'true' else u'流嘅' if verified is 'false' else u'冇人知' # male, female, neutral
+            verified = u'好似係' if str(verified) is 'true' else u'流嘅' if str(verified) is 'false' else u'冇人知' # male, female, neutral
         
         time_str = get_time_as_str(pkmn['disappear_time'], self.__timezone)
         pkmn.update({
