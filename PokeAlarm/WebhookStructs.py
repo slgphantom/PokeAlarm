@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 import multiprocessing
 import traceback
+import base64
 # 3rd Party Imports
 # Local Imports
 from Utils import get_gmaps_link
@@ -45,10 +46,11 @@ class RocketMap:
         atk, def_, sta = data.get('individual_attack'), data.get('individual_defense'), data.get('individual_stamina')
         height, weight, gender = data.get('height'), data.get('weight'), data.get('gender')
         cp, form = data.get('cp'), data.get('form')
+        id = data.get('encounter_id')
 
         pkmn = {
             'type': "pokemon",
-            'id': data['encounter_id'],
+            'id': '#e' + hex(int(base64.b64decode(id)))[2:],
             'pkmn_id': int(data['pokemon_id']),
             'disappear_time': datetime.utcfromtimestamp(data['disappear_time']),
             'lat': float(data['latitude']),
