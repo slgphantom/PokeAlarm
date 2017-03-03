@@ -6,6 +6,10 @@ import telepot
 from ..Alarm import Alarm
 from Stickers import sticker_list
 from ..Utils import parse_boolean
+# Gif support
+import imghdr
+import httplib
+import cStringIO
 
 log = logging.getLogger('Telegram')
 try_sending = Alarm.try_sending
