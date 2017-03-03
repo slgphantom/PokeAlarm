@@ -91,6 +91,7 @@ class TelegramAlarm(Alarm):
 
     # Send Alert to Telegram
     def send_alert(self, alert, info, sticker_id=None):
+        channel = alert['chat_id']
         video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
         try:
             conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
@@ -101,11 +102,11 @@ class TelegramAlarm(Alarm):
             what_type = imghdr.what(image_file_obj)
             if what_type is not None:
                 videoargs = {
-                    'chat_id': alert['chat_id'],
-                    'video': video_url,
-                    'width': 192,
-                    'height': 192,
-                    'disable_notification': 'True'
+                'chat_id': channel,
+                'video': video_url,
+                'width': 192,
+                'height': 192,
+                'disable_notification': 'True'
                 }
                 try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
             else:
@@ -118,34 +119,47 @@ class TelegramAlarm(Alarm):
                 what_type = imghdr.what(image_file_obj)
                 if what_type is not None:
                     videoargs = {
-                        'chat_id': alert['chat_id'],
+                        'chat_id': channel,
                         'video': video_url,
                         'width': 192,
                         'height': 192,
                         'disable_notification': 'True'
                     }
                     try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
-
-                else: # fallback to sticker
-                    if sticker_id:
-                        stickerargs = {
-                            'chat_id': alert['chat_id'],
-                            'sticker': unicode(sticker_id),
+                else:
+                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'.gif'
+                    conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
+                    path = '/sprites/xy/'+str(info['pkmn']).lower()+'.gif'
+                    conn.request('GET', path)
+                    r1 = conn.getresponse()
+                    image_file_obj = cStringIO.StringIO(r1.read())
+                    what_type = imghdr.what(image_file_obj)
+                    if what_type is not None:
+                        videoargs = {
+                            'chat_id': channel,
+                            'video': video_url,
+                            'width': 192,
+                            'height': 192,
                             'disable_notification': 'True'
                         }
-                        try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
-
-        except Exception as e: # fallback to sticker
+                        try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
+                    else:
+                        if sticker_id:
+                            stickerargs = {
+                                'chat_id': channel,
+                                'sticker': unicode(sticker_id),
+                                'disable_notification': 'True'
+                            }
+                            try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
+        except Exception as e:
             log.info(e)
             if sticker_id:
                 stickerargs = {
-                    'chat_id': alert['chat_id'],
-                    'sticker': unicode(sticker_id),
-                    'disable_notification': 'True'
+                'chat_id': channel,
+                'sticker': unicode(sticker_id),
+                'disable_notification': 'True'
                 }
                 try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
-
-
 
             
         if alert['location']:
