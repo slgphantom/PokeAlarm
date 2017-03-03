@@ -92,10 +92,17 @@ class TelegramAlarm(Alarm):
     # Send Alert to Telegram
     def send_alert(self, alert, info, sticker_id=None):
         channel = alert['chat_id']
-        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'-3.gif'
+        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
         try:
+            httplib.HTTPConnection.debuglevel = 1
+
+            logging.getLogger().setLevel(logging.DEBUG)
+            requests_log = logging.getLogger("requests.packages.urllib3")
+            requests_log.setLevel(logging.DEBUG)
+            requests_log.propagate = True
+
             conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
-            path = '/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
+            path = '/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
             conn.request('GET', path)
             r1 = conn.getresponse()
             image_file_obj = cStringIO.StringIO(r1.read())
@@ -110,9 +117,15 @@ class TelegramAlarm(Alarm):
                 }
                 try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
             else:
-                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'-2.gif'
+                log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif was not found')
+                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif'
+                httplib.HTTPConnection.debuglevel = 1
+                logging.getLogger().setLevel(logging.DEBUG)
+                requests_log = logging.getLogger("requests.packages.urllib3")
+                requests_log.setLevel(logging.DEBUG)
+                requests_log.propagate = True
                 conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
-                path = '/sprites/xy/'+str(info['pkmn']).lower()+'-2.gif'
+                path = '/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif'
                 conn.request('GET', path)
                 r1 = conn.getresponse()
                 image_file_obj = cStringIO.StringIO(r1.read())
@@ -127,9 +140,15 @@ class TelegramAlarm(Alarm):
                     }
                     try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
                 else:
-                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'.gif'
+                    log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif was not found')
+                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif'
+                    httplib.HTTPConnection.debuglevel = 1
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    requests_log = logging.getLogger("requests.packages.urllib3")
+                    requests_log.setLevel(logging.DEBUG)
+                    requests_log.propagate = True
                     conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
-                    path = '/sprites/xy/'+str(info['pkmn']).lower()+'.gif'
+                    path = '/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif'
                     conn.request('GET', path)
                     r1 = conn.getresponse()
                     image_file_obj = cStringIO.StringIO(r1.read())
@@ -144,6 +163,7 @@ class TelegramAlarm(Alarm):
                         }
                         try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
                     else:
+                        log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif was not found')
                         if sticker_id:
                             stickerargs = {
                                 'chat_id': channel,
@@ -152,6 +172,7 @@ class TelegramAlarm(Alarm):
                             }
                             try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
         except Exception as e:
+            log.info('Problem while loading GIF(s) for '+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+', reverting to sticker')
             log.info(e)
             if sticker_id:
                 stickerargs = {
@@ -160,6 +181,7 @@ class TelegramAlarm(Alarm):
                 'disable_notification': 'True'
                 }
                 try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
+
 
             
         if alert['location']:
