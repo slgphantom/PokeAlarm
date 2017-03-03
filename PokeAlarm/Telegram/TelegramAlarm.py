@@ -92,7 +92,7 @@ class TelegramAlarm(Alarm):
     # Send Alert to Telegram
     def send_alert(self, alert, info, sticker_id=None):
         channel = alert['chat_id']
-        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
+        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'-3.gif'
         try:
             conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
             path = '/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
@@ -110,7 +110,7 @@ class TelegramAlarm(Alarm):
                 }
                 try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
             else:
-                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'-2.gif'
+                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'-2.gif'
                 conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
                 path = '/sprites/xy/'+str(info['pkmn']).lower()+'-2.gif'
                 conn.request('GET', path)
@@ -127,7 +127,7 @@ class TelegramAlarm(Alarm):
                     }
                     try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
                 else:
-                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'.gif'
+                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(pokemon_info['pkmn_id']).lower()+'.gif'
                     conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
                     path = '/sprites/xy/'+str(info['pkmn']).lower()+'.gif'
                     conn.request('GET', path)
