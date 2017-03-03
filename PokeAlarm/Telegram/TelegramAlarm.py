@@ -101,7 +101,7 @@ class TelegramAlarm(Alarm):
             what_type = imghdr.what(image_file_obj)
             if what_type is not None:
                 videoargs = {
-                    'chat_id': alert['channel'],
+                    'chat_id': alert['chat_id'],
                     'video': video_url,
                     'width': 192,
                     'height': 192,
@@ -118,7 +118,7 @@ class TelegramAlarm(Alarm):
                 what_type = imghdr.what(image_file_obj)
                 if what_type is not None:
                     videoargs = {
-                        'chat_id': alert['channel'],
+                        'chat_id': alert['chat_id'],
                         'video': video_url,
                         'width': 192,
                         'height': 192,
@@ -129,7 +129,7 @@ class TelegramAlarm(Alarm):
                 else: # fallback to sticker
                     if sticker_id:
                         stickerargs = {
-                            'chat_id': alert['channel'],
+                            'chat_id': alert['chat_id'],
                             'sticker': unicode(sticker_id),
                             'disable_notification': 'True'
                         }
