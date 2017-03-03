@@ -139,7 +139,7 @@ class TelegramAlarm(Alarm):
             log.info(e)
             if sticker_id:
                 stickerargs = {
-                    'chat_id': channel,
+                    'chat_id': alert['chat_id'],
                     'sticker': unicode(sticker_id),
                     'disable_notification': 'True'
                 }
