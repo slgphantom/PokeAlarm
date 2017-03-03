@@ -91,7 +91,7 @@ class TelegramAlarm(Alarm):
 
     # Send Alert to Telegram
     def send_alert(self, alert, info, sticker_id=None):
-        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
+    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
         try:
             conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
             path = '/sprites/xy/'+str(info['pkmn']).lower()+'-3.gif'
@@ -146,6 +146,7 @@ class TelegramAlarm(Alarm):
                 try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
 
 
+
             
         if alert['location']:
             args = {
@@ -197,3 +198,4 @@ class TelegramAlarm(Alarm):
             self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()))
         else:
             self.send_alert(self.__gym, gym_info)
+
