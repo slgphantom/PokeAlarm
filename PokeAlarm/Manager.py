@@ -247,9 +247,9 @@ class Manager(object):
         if gender != '?':
             gender = u'\u2642' if gender is 1 else u'\u2640' if gender is 2 else u'\u26b2' # male, female, neutral
         if form != '?':
-            form = 'A' if form is 1 else 'B' if form is 2 else 'C' if form is 3 else 'D' if form is 4 else 'E' if form is 5 else 'F' if form is 6 else 'G' if form is 7 else 'H' if form is 8 else 'I' if form is 9 else 'J' if form is 10 else 'K' if form is 11 else 'L' if form is 12 else 'M' if form is 13 else 'N' if form is 14 else 'O' if form is 15 else 'P' if form is 16 else 'Q' if form is 17 else 'R' if form is 18 else 'S' if form is 19 else 'T' if form is 20 else 'U' if form is 21 else 'V' if form is 22 else 'W' if form is 23 else 'X' if form is 24 else 'Y' if form is 25 else 'Z' if form is 26 else '!' if form is 27 else '?' if form is 28 else '' #neutral
+            form = '[A]' if form is 1 else '[B]' if form is 2 else '[C]' if form is 3 else '[D]' if form is 4 else '[E]' if form is 5 else '[F]' if form is 6 else '[G]' if form is 7 else '[H]' if form is 8 else '[I]' if form is 9 else '[J]' if form is 10 else '[K]' if form is 11 else '[L]' if form is 12 else '[M]' if form is 13 else '[N]' if form is 14 else '[O]' if form is 15 else '[P]' if form is 16 else '[Q]' if form is 17 else '[R]' if form is 18 else '[S]' if form is 19 else '[T]' if form is 20 else '[U]' if form is 21 else '[V]' if form is 22 else '[W]' if form is 23 else '[X]' if form is 24 else '[Y]' if form is 25 else '[Z]' if form is 26 else '[!]' if form is 27 else '[?]' if form is 28 else '' #neutral
         if verified != '?':
-            verified = u'好似係' if str(verified) == 'true' else u'流嘅' if str(verified) == 'false' else u'冇人知' # male, female, neutral
+            verified = u'好似係' if str(verified) == 'true' else u'假嘅' if str(verified) == 'false' else u'冇人知' # male, female, neutral
         
         time_str = get_time_as_str(pkmn['disappear_time'], self.__timezone)
         pkmn.update({
@@ -718,8 +718,8 @@ class Manager(object):
     def reverse_location(self, lat, lng):
         # Set defaults in case something goes wrong
         details = {
-            'street_num':'unkn', 'street':'unknown', 'address':'unknown', 'postal':'unknown','neighborhood':'unknown',
-            'sublocality':'unknown', 'city':'unknown', 'county':'unknown', 'state':'unknown', 'country':'country'
+            'street_num':'None', 'street':'None', 'address':'None', 'postal':'None','neighborhood':'None',
+            'sublocality':'None', 'city':'None', 'county':'None', 'state':'None', 'country':'country'
         }
         if self.__gmaps_client is None:  # Check if key was provided
             log.error("No Google Maps API key provided - unable to reverse geocode.")
@@ -733,13 +733,13 @@ class Manager(object):
             details['street_num'] = loc.get('street_number', 'unkn')
             details['street'] = loc.get('route', 'unkn')
             details['address'] = "{} {}".format(details['street_num'], details['street'])
-            details['postal'] = loc.get('postal_code', 'unkn')
-            details['neighborhood'] = loc.get('neighborhood', "unknown")
-            details['sublocality'] = loc.get('sublocality', "unknown")
-            details['city'] = loc.get('locality', loc.get('postal_town', 'unknown'))
-            details['county'] = loc.get('administrative_area_level_2', 'unknown')
-            details['state'] = loc.get('administrative_area_level_1', 'unknown')
-            details['country'] = loc.get('country', 'unknown')
+            details['postal'] = loc.get('postal_code', 'None')
+            details['neighborhood'] = loc.get('neighborhood', "None").replace(' ','')
+            details['sublocality'] = loc.get('sublocality', "None")
+            details['city'] = loc.get('locality', loc.get('postal_town', 'None'))
+            details['county'] = loc.get('administrative_area_level_2', 'None')
+            details['state'] = loc.get('administrative_area_level_1', 'None')
+            details['country'] = loc.get('country', 'None')
         except Exception as e:
             log.error("Encountered error while getting reverse location data ({}: {})".format(type(e).__name__, e))
             log.debug("Stack trace: \n {}".format(traceback.format_exc()))
