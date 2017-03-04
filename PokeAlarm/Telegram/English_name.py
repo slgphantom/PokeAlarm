@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 english_name = {
   "1":"Bulbasaur",
   "2":"Ivysaur",
