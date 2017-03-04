@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Standard Library Imports
 import logging
 # 3rd Party Imports
