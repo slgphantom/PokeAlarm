@@ -94,7 +94,7 @@ class TelegramAlarm(Alarm):
     # Send Alert to Telegram
     def send_alert(self, alert, info, sticker_id=None):
         channel = alert['chat_id']
-        eng_name = english_name.get(info['pkmn_id'])
+        eng_name = english_name.get(str(info['pkmn_id']))
         video_url = 'http://www.pokestadium.com/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
         try:
             httplib.HTTPConnection.debuglevel = 1
@@ -143,7 +143,7 @@ class TelegramAlarm(Alarm):
                     }
                     try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
                 else:
-                    log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif was not found')
+                    log.info('http://www.pokestadium.com/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif was not found')
                     if sticker_id:
                         stickerargs = {
                             'chat_id': channel,
