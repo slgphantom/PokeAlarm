@@ -105,7 +105,7 @@ class TelegramAlarm(Alarm):
             requests_log.propagate = True
 
             conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
-            path = '/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
+            path = '/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
             conn.request('GET', path)
             r1 = conn.getresponse()
             image_file_obj = cStringIO.StringIO(r1.read())
