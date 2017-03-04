@@ -5,7 +5,6 @@ import telepot
 # Local Imports
 from ..Alarm import Alarm
 from Stickers import sticker_list
-from English_name import english_name
 from ..Utils import parse_boolean
 # Gif support
 import imghdr
@@ -91,9 +90,9 @@ class TelegramAlarm(Alarm):
         return alert
 
     # Send Alert to Telegram
-    def send_alert(self, alert, info, sticker_id=None, eng_name):
+    def send_alert(self, alert, info, sticker_id=None):
         channel = alert['chat_id']
-        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
+        video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif'
         try:
             httplib.HTTPConnection.debuglevel = 1
 
@@ -118,8 +117,8 @@ class TelegramAlarm(Alarm):
                 }
                 try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
             else:
-                log.info('http://www.pokestadium.com/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif was not found')
-                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(eng_name).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif'
+                log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-3.gif was not found')
+                video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif'
                 httplib.HTTPConnection.debuglevel = 1
                 logging.getLogger().setLevel(logging.DEBUG)
                 requests_log = logging.getLogger("requests.packages.urllib3")
@@ -141,14 +140,37 @@ class TelegramAlarm(Alarm):
                     }
                     try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
                 else:
-                    log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif was not found')
-                    if sticker_id:
-                        stickerargs = {
+                    log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'-2.gif was not found')
+                    video_url = 'http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif'
+                    httplib.HTTPConnection.debuglevel = 1
+                    logging.getLogger().setLevel(logging.DEBUG)
+                    requests_log = logging.getLogger("requests.packages.urllib3")
+                    requests_log.setLevel(logging.DEBUG)
+                    requests_log.propagate = True
+                    conn = httplib.HTTPConnection('www.pokestadium.com', timeout=10)
+                    path = '/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif'
+                    conn.request('GET', path)
+                    r1 = conn.getresponse()
+                    image_file_obj = cStringIO.StringIO(r1.read())
+                    what_type = imghdr.what(image_file_obj)
+                    if what_type is not None:
+                        videoargs = {
                             'chat_id': channel,
-                            'sticker': unicode(sticker_id),
+                            'video': video_url,
+                            'width': 192,
+                            'height': 192,
                             'disable_notification': 'True'
                         }
-                        try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
+                        try_sending(log, self.connect, 'Telegram (video)', self.__client.sendVideo, videoargs)
+                    else:
+                        log.info('http://www.pokestadium.com/sprites/xy/'+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+'.gif was not found')
+                        if sticker_id:
+                            stickerargs = {
+                                'chat_id': channel,
+                                'sticker': unicode(sticker_id),
+                                'disable_notification': 'True'
+                            }
+                            try_sending(log, self.connect, 'Telegram (sticker)', self.__client.sendSticker, stickerargs)
         except Exception as e:
             log.info('Problem while loading GIF(s) for '+str(info['pkmn']).lower().replace('\xe2\x99\x82','m').replace('\xe2\x99\x80','f')+', reverting to sticker')
             log.info(e)
@@ -195,21 +217,21 @@ class TelegramAlarm(Alarm):
     # Trigger an alert based on Pokemon info
     def pokemon_alert(self, pokemon_info):
         if self.__pokemon['stickers']:
-            self.send_alert(self.__pokemon, pokemon_info, sticker_list.get(str(pokemon_info['pkmn_id'])), english_name.get(str(pokemon_info['pkmn_id'])))
+            self.send_alert(self.__pokemon, pokemon_info, sticker_list.get(str(pokemon_info['pkmn_id'])))
         else:
             self.send_alert(self.__pokemon, pokemon_info)
 
     # Trigger an alert based on Pokestop info
     def pokestop_alert(self, pokestop_info):
         if self.__pokestop['stickers']:
-            self.send_alert(self.__pokestop, pokestop_info, sticker_list.get('pokestop'), english_name.get(str(pokemon_info['pkmn_id'])))
+            self.send_alert(self.__pokestop, pokestop_info, sticker_list.get('pokestop'))
         else:
             self.send_alert(self.__pokestop, pokestop_info)
 
     # Trigger an alert based on Pokestop info
     def gym_alert(self, gym_info):
         if self.__gym['stickers']:
-            self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()), english_name.get(str(pokemon_info['pkmn_id'])))
+            self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()))
         else:
             self.send_alert(self.__gym, gym_info)
 
