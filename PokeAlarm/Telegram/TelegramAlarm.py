@@ -202,14 +202,14 @@ class TelegramAlarm(Alarm):
     # Trigger an alert based on Pokestop info
     def pokestop_alert(self, pokestop_info):
         if self.__pokestop['stickers']:
-            self.send_alert(self.__pokestop, pokestop_info, sticker_list.get('pokestop'))
+            self.send_alert(self.__pokestop, pokestop_info, sticker_list.get('pokestop'), english_name.get(str(pokemon_info['pkmn_id'])))
         else:
             self.send_alert(self.__pokestop, pokestop_info)
 
     # Trigger an alert based on Pokestop info
     def gym_alert(self, gym_info):
         if self.__gym['stickers']:
-            self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()))
+            self.send_alert(self.__gym, gym_info, sticker_list.get(gym_info['new_team'].lower()), english_name.get(str(pokemon_info['pkmn_id'])))
         else:
             self.send_alert(self.__gym, gym_info)
 
